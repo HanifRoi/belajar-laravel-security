@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(UserController::class)->group(function(){
     Route::get('/users/login', 'login');
-    Route::get('users/current', 'current');
+    Route::get('users/current', 'current')->middleware('auth');
 });
 
 Route::get('/', function () {

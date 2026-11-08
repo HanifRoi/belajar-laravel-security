@@ -51,11 +51,25 @@ class UserTest extends TestCase
     public function testCurrent()
     {
        $this->seed(UserSeeder::class);
-       
+
         $user = User::where('email', 'hanif@gans')->first();
         $this->actingAs($user);
 
         $response = $this->get('users/current')
         ->assertSeeText('Hello Hanif Roihan');
+    }
+
+    public function testCurrentBeforeLogin()
+    {
+        $this->seed(UserSeeder::class);
+        $this->get('users/current')->assertRedirect('/login')->assertStatus(302);
+    }
+
+    public function testCurrentAfterLogin()
+    {
+        $this->seed(UserSeeder::class);
+        $user = User::where('email', 'hanif@gans')->first();
+        $this->actingAs($user);
+        $this->get('users/current')->assertStatus(200)->assertSeeText('Hello Hanif Roihan');
     }
 }
