@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertEquals;
@@ -33,5 +35,27 @@ class UserTest extends TestCase
     {
         $user = Auth::user();
         assertNull($user);
+    }
+
+    public function testLogin()
+    {
+        $this->seed(UserSeeder::class);
+
+        $this->get('users/login?email=hanif@gans&password=rahasia')
+        ->assertRedirect('users/current');
+
+        $this->get('users/login?email=hanif@gans&password=wrong')
+        ->assertSeeText('Wrong credentials');
+    }
+
+    public function testCurrent()
+    {
+       $this->seed(UserSeeder::class);
+       
+        $user = User::where('email', 'hanif@gans')->first();
+        $this->actingAs($user);
+
+        $response = $this->get('users/current')
+        ->assertSeeText('Hello Hanif Roihan');
     }
 }

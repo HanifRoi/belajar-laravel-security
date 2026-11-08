@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::controller(UserController::class)->group(function(){
+    Route::get('/users/login', 'login');
+    Route::get('users/current', 'current');
+});
 
 Route::get('/', function () {
     return view('welcome');
