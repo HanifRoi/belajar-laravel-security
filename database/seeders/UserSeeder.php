@@ -20,5 +20,12 @@ class UserSeeder extends Seeder
             'password'=>Hash::make('rahasia'),
             'token'=> 'secret'
         ]);
+
+        User::create([
+            'name'=>'Hanif Roihan',
+            'email'=>'roihan@gans',
+            'password'=>Hash::make('rahasia'),
+            'token'=> 'secret'
+        ]);
     }
 }
