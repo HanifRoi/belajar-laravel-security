@@ -6,8 +6,6 @@ use App\Models\Contact;
 use App\Models\User;
 use Database\Seeders\ContactSeeder;
 use Database\Seeders\UserSeeder;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
@@ -38,5 +36,25 @@ class GateTest extends TestCase
         assertFalse(Gate::allows('update-contact', $contact));
         assertFalse(Gate::allows('delete-contact', $contact));
 
+    }
+
+    public function testGateMethod() {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user  = User::where('email', 'hanif@gans')->firstOrFail();
+        $this->actingAs($user);
+
+        $contact = Contact::where('email', 'test@gans')->firstOrFail();
+        assertTrue(Gate::any(['get-contact', 'update-contact' , 'delete-contact'], $contact));
+        assertFalse(Gate::none(['get-contact', 'update-contact' , 'delete-contact'], $contact));
+    }
+
+    public function testGateMethodNonLogin() {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user  = User::where('email', 'hanif@gans')->firstOrFail();
+        $gate = Gate::forUser($user);
+
+        $contact = Contact::where('email', 'test@gans')->firstOrFail();
+        assertTrue($gate->any(['get-contact', 'update-contact' , 'delete-contact'], $contact));
+        assertFalse($gate->none(['get-contact', 'update-contact' , 'delete-contact'], $contact));
     }
 }
