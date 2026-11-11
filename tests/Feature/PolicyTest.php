@@ -1,0 +1,31 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Todo;
+use App\Models\User;
+use Database\Seeders\TodoSeeder;
+use Database\Seeders\UserSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Gate;
+use Tests\TestCase;
+
+use function PHPUnit\Framework\assertTrue;
+
+class PolicyTest extends TestCase
+{
+    public function testPolicy()
+    {
+        $this->seed([UserSeeder::class, TodoSeeder::class]);
+
+        $user = User::where('email', 'hanif@gans')->firstOrFail();
+        $this->actingAs($user);
+        
+        $todo = Todo::first();
+        assertTrue(Gate::allows('view', $todo));
+        assertTrue(Gate::allows('update', $todo));
+        assertTrue(Gate::allows('delete', $todo));
+        assertTrue(Gate::allows('create', Todo::class));
+    }
+}
