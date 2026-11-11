@@ -9,6 +9,7 @@ use Database\Seeders\UserSeeder;
 use Illuminate\Support\Facades\Gate;
 use Tests\TestCase;
 
+use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
@@ -57,4 +58,16 @@ class GateTest extends TestCase
         assertTrue($gate->any(['get-contact', 'update-contact' , 'delete-contact'], $contact));
         assertFalse($gate->none(['get-contact', 'update-contact' , 'delete-contact'], $contact));
     }
+
+    public function testGateResponse() {
+        $this->seed([UserSeeder::class, ContactSeeder::class]);
+        $user  = User::where('email', 'hanif@gans')->firstOrFail();
+        $this->actingAs($user);
+
+        $response = Gate::inspect('create-contact');
+        assertFalse($response->allowed()); //karena name bukan admin
+        assertEquals("You are not admin", $response->message());
+    }
+
+
 }
