@@ -42,4 +42,6 @@ class PolicyTest extends TestCase
         assertTrue($user->can('delete', $todo));
         assertTrue($user->can('create', Todo::class));
     }
+
+    
 }
